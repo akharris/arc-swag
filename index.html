@@ -40,17 +40,121 @@
 
   <script type="text/javascript">
     $(function () {
-      var url = window.location.search.match(/url=([^&]+)/);
-      if (url && url.length > 1) {
-        url = decodeURIComponent(url[1]);
-        } else {
-        url =  "https://opendatadev.arcgis.com/api/v2/swagger.json";
+      url =  "https://opendatadev.arcgis.com/api/v2/swagger.json";
+
+      window.swaggerUi = new SwaggerUi({
+        url: url,
+        validatorUrl: null,
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        onComplete: function(swaggerApi, swaggerUi){
+          if(typeof initOAuth == "function") {
+            initOAuth({
+              clientId: "your-client-id",
+              clientSecret: "your-client-secret",
+              realm: "your-realms",
+              appName: "your-app-name", 
+              scopeSeparator: ","
+            });
+          }
+
+          if(window.SwaggerTranslator) {
+            window.SwaggerTranslator.translate();
+          }
+
+          $('pre code').each(function(i, e) {
+            hljs.highlightBlock(e)
+          });
+
+          addApiKeyAuthorization();
+        },
+        onFailure: function(data) {
+          log("Unable to Load SwaggerUI");
+        },
+        docExpansion: "none",
+        apisSorter: "alpha",
+        showRequestHeaders: false
+      });
+
+      function addApiKeyAuthorization(){
+        var key = encodeURIComponent($('#input_apiKey')[0].value);
+        if(key && key.trim() != "") {
+            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
+            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
+            log("added key " + key);
+        }
       }
 
-      // Pre load translate...
-      if(window.SwaggerTranslator) {
-        window.SwaggerTranslator.translate();
+      $('#input_apiKey').change(addApiKeyAuthorization);
+
+      window.swaggerUi.load();
+
+      function log() {
+        if ('console' in window) {
+          console.log.apply(console, arguments);
+        }
       }
+  });
+  </script>
+
+
+</head>
+
+<body>
+  <div class="container page-index">
+    <div class='header' id='header'>
+      <h1 class='text-muted'>
+        <a id="ember434" href="#/" class="ember-view active">ArcGIS Open Data</a>
+      </h1>
+        <small><!-----></small>
+        <nav class="navbar navbar-default" role="navigation">
+          <div class="container">
+            <div id="ember453" class="ember-view">
+              <form style="display: none;" class="navbar-form navbar-left" role="search" data-ember-action="454" _lpchecked="1"><div class="form-group"><label class="sr-only" for="header-search">Search Open Data</label><input id="header-search" placeholder="Search" autocomplete="off" type="text" class="form-control ember-view ember-text-field"></input><button type="submit" class="btn btn-default"></button></div>
+            </div>
+            <ul class="nav nav-pills pull-right">
+              <li role="presentation"><a href="https://opendatadev.arcgis.com" data-ember-action="463" target="_blank">ArcGIS Open Data</a></li>
+              <li role="presentation"><a href="https://developers.arcgis.com/en/" target="_blank" data-ember-action="463" target="_blank">Developers</a></li>
+              <li id='dev-v1' role="presentation"><a href="#dev-v1" data-ember-action="463">Dev V1</a></li>
+              <li id='dev-v2' role="presentation"><a href="#dev-v2" data-ember-action="463">Dev V2</a></li>
+              <li id='qa-v1' role="presentation"><a href="#qa-v1" data-ember-action="463">QA V1</a></li>
+              <li id='qa-v2' role="presentation"><a href="#qa-v2" data-ember-action="463">QA V2</a></li>
+            </ul>
+          </div>
+        </nav>
+      </h1>
+    </div>
+  </div>
+
+  <div class="swagger-section container">
+    <div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
+    <div id="swagger-ui-container" class="swagger-ui-wrap" style='max-width: 1170px;'></div>
+  </div>
+</body>
+
+<footer id="footer-region" class="footer one-line" role="contentinfo">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 col-md-9">
+        <ul class="text-muted list-inline" role="navigation">
+          <li>© 2015 Esri. All rights reserved.</li>
+          <li><a href="http://www.esri.com/legal/privacy" target="_blank">Privacy</a></li>
+          <li><a href="http://www.esri.com/legal/software-license" target="_blank">Terms of Use</a></li>
+        </ul>
+      </div>
+      <div class="hidden-xs col-sm-2 col-md-3 text-right">
+        <a href="http://www.esri.com/" target="_blank">
+        </a>
+      </div>
+  </div>
+  <!-- /.container -->
+</footer>
+
+<script>
+  $(document).ready(function() {
+    $('#dev-v1').on('click', function(e) {
+      e.preventDefault();
+      url = "https://opendatadev.arcgis.com/api/swagger.json"
       window.swaggerUi = new SwaggerUi({
         url: url,
         validatorUrl: null,
@@ -103,63 +207,164 @@
       */
 
       window.swaggerUi.load();
+    });
 
-      function log() {
-        if ('console' in window) {
-          console.log.apply(console, arguments);
+    $('#dev-v2').on('click', function(e) {
+      e.preventDefault();
+      url = "https://opendatadev.arcgis.com/api/v2/swagger.json"
+      window.swaggerUi = new SwaggerUi({
+        url: url,
+        validatorUrl: null,
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        onComplete: function(swaggerApi, swaggerUi){
+          if(typeof initOAuth == "function") {
+            initOAuth({
+              clientId: "your-client-id",
+              clientSecret: "your-client-secret",
+              realm: "your-realms",
+              appName: "your-app-name", 
+              scopeSeparator: ","
+            });
+          }
+
+          if(window.SwaggerTranslator) {
+            window.SwaggerTranslator.translate();
+          }
+
+          $('pre code').each(function(i, e) {
+            hljs.highlightBlock(e)
+          });
+
+          addApiKeyAuthorization();
+        },
+        onFailure: function(data) {
+          log("Unable to Load SwaggerUI");
+        },
+        docExpansion: "none",
+        apisSorter: "alpha",
+        showRequestHeaders: false
+      });
+
+      function addApiKeyAuthorization(){
+        var key = encodeURIComponent($('#input_apiKey')[0].value);
+        if(key && key.trim() != "") {
+            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
+            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
+            log("added key " + key);
         }
       }
+
+      $('#input_apiKey').change(addApiKeyAuthorization);
+      window.swaggerUi.load();
+
+    });
+
+    $('#qa-v1').on('click', function(e) {
+      e.preventDefault();
+      url = "https://opendataqa.arcgis.com/api/swagger.json"
+      window.swaggerUi = new SwaggerUi({
+        url: url,
+        validatorUrl: null,
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        onComplete: function(swaggerApi, swaggerUi){
+          if(typeof initOAuth == "function") {
+            initOAuth({
+              clientId: "your-client-id",
+              clientSecret: "your-client-secret",
+              realm: "your-realms",
+              appName: "your-app-name", 
+              scopeSeparator: ","
+            });
+          }
+
+          if(window.SwaggerTranslator) {
+            window.SwaggerTranslator.translate();
+          }
+
+          $('pre code').each(function(i, e) {
+            hljs.highlightBlock(e)
+          });
+
+          addApiKeyAuthorization();
+        },
+        onFailure: function(data) {
+          log("Unable to Load SwaggerUI");
+        },
+        docExpansion: "none",
+        apisSorter: "alpha",
+        showRequestHeaders: false
+      });
+
+      function addApiKeyAuthorization(){
+        var key = encodeURIComponent($('#input_apiKey')[0].value);
+        if(key && key.trim() != "") {
+            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
+            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
+            log("added key " + key);
+        }
+      }
+
+      $('#input_apiKey').change(addApiKeyAuthorization);
+      window.swaggerUi.load();
+
+    });
+
+
+    $('#qa-v2').on('click', function(e) {
+      e.preventDefault();
+      url = "https://opendataqa.arcgis.com/api/v2/swagger.json"
+      window.swaggerUi = new SwaggerUi({
+        url: url,
+        validatorUrl: null,
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        onComplete: function(swaggerApi, swaggerUi){
+          if(typeof initOAuth == "function") {
+            initOAuth({
+              clientId: "your-client-id",
+              clientSecret: "your-client-secret",
+              realm: "your-realms",
+              appName: "your-app-name", 
+              scopeSeparator: ","
+            });
+          }
+
+          if(window.SwaggerTranslator) {
+            window.SwaggerTranslator.translate();
+          }
+
+          $('pre code').each(function(i, e) {
+            hljs.highlightBlock(e)
+          });
+
+          addApiKeyAuthorization();
+        },
+        onFailure: function(data) {
+          log("Unable to Load SwaggerUI");
+        },
+        docExpansion: "none",
+        apisSorter: "alpha",
+        showRequestHeaders: false
+      });
+
+      function addApiKeyAuthorization(){
+        var key = encodeURIComponent($('#input_apiKey')[0].value);
+        if(key && key.trim() != "") {
+            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
+            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
+            log("added key " + key);
+        }
+      }
+
+      $('#input_apiKey').change(addApiKeyAuthorization);
+      window.swaggerUi.load();
+
+    });
+
   });
-  </script>
-
-
-</head>
-
-<body>
-  <div class="container page-index">
-    <div class='header' id='header'>
-      <h1 class='text-muted'>
-        <a id="ember434" href="#/" class="ember-view active">ArcGIS Open Data</a>
-      </h1>
-        <small><!-----></small>
-        <nav class="navbar navbar-default" role="navigation">
-          <div class="container">
-            <div id="ember453" class="ember-view">
-              <form style="display: none;" class="navbar-form navbar-left" role="search" data-ember-action="454" _lpchecked="1"><div class="form-group"><label class="sr-only" for="header-search">Search Open Data</label><input id="header-search" placeholder="Search" autocomplete="off" type="text" class="form-control ember-view ember-text-field"></input><button type="submit" class="btn btn-default"></button></div>
-            </div>
-            <ul class="nav nav-pills pull-right">
-              <li role="presentation"><a href="https://opendatadev.arcgis.com" data-ember-action="463" target="_blank">ArcGIS Open Data</a></li>
-              <li role="presentation"><a href="https://developers.arcgis.com/en/" target="_blank" data-ember-action="463" target="_blank">Developers</a></li>
-            </ul>
-          </div>
-        </nav>
-      </h1>
-    </div>
-  </div>
-
-  <div class="swagger-section container">
-    <div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
-    <div id="swagger-ui-container" class="swagger-ui-wrap" style='max-width: 1170px;'></div>
-  </div>
-</body>
-
-<footer id="footer-region" class="footer one-line" role="contentinfo">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-sm-10 col-md-9">
-        <ul class="text-muted list-inline" role="navigation">
-          <li>© 2015 Esri. All rights reserved.</li>
-          <li><a href="http://www.esri.com/legal/privacy" target="_blank">Privacy</a></li>
-          <li><a href="http://www.esri.com/legal/software-license" target="_blank">Terms of Use</a></li>
-        </ul>
-      </div>
-      <div class="hidden-xs col-sm-2 col-md-3 text-right">
-        <a href="http://www.esri.com/" target="_blank">
-        </a>
-      </div>
-  </div>
-  <!-- /.container -->
-</footer>
+</script>
 
 
 </html>
